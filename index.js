@@ -16,7 +16,7 @@ app.get("/", (req,res)=>{
 
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion,ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.mp7na2j.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 // const uri = "mongodb+srv://<db_username>:<db_password>@cluster0.mp7na2j.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
@@ -49,10 +49,25 @@ app.get("/reviews", async(req,res)=>{
 })
 
 //cart collection
+
+app.get("/carts", async(req,res)=>{
+  const email = req.query.email;
+  const query = {email:email}
+  const result = await cartCollection.find(query).toArray();
+  res.send(result)
+})
 app.post("/carts", async(req,res)=>{
+
   const cartItem = req.body;
   const result =await cartCollection.insertOne(cartItem);
   res.send(result)
+})
+app.delete("/carts/:id",async(req,res)=>{
+  const id= req.params.id;
+  const query = {_id: new ObjectId(id)}
+    const result = await cartCollection.deleteOne(query);
+    res.send(result)
+  
 })
 
 
